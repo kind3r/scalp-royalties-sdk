@@ -1,0 +1,401 @@
+swagger: "2.0"
+info:
+  title: "Scalp Empire Creator Royalties API"
+  description: "
+  [Scalp Empire](https://www.scalp-empire.com) offers an easy way for creators and project owners to check the status of royalty payments for the NFTs part of their collection.
+  Access is provided **free of charge** within certain usage limits.
+
+
+  The API also offers an easy way for developers to integrate royalty payments into their dAPP by generating and submiting the royalty payment transaction.
+
+
+  If you are a creator or project owner and would like access to this API please contact us on our [Discord](https://www.discord.gg/scalpempire) in order to obtain your API KEY.
+  "
+  version: 1.0.0
+host: royalties.scalp-empire.com
+basePath: /v1
+schemes:
+  - https
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+tags:
+  - name: Check
+    description: Check status of royalties
+  - name: Pay
+    description: Generate and submit royalty payment transactions
+  - name: CORS
+    description: CORS related operations
+paths:
+  /check/{mint}:
+    get:
+      operationId: CheckOneMint
+      tags:
+        - Check
+      summary: Check last sale royalty status for a single token
+      produces:
+        - "application/json"
+      parameters:
+        - name: mint
+          in: path
+          required: true
+          description: Token address
+          type: string
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/CheckMintResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      security:
+        - api_key: []
+  /check:
+    post:
+      operationId: CheckMultipleMints
+      tags:
+        - Check
+      summary: Check last sale royalty status for multiple tokens
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: mints
+          required: true
+          schema:
+            $ref: "#/definitions/CheckMintsRequest"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/CheckMintsResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      security:
+        - api_key: []
+  /pay-transaction:
+    post:
+      operationId: PayTransactionGenerate
+      tags:
+        - Pay
+      summary: Generate a transaction for royalties payment
+      description: "The transaction generated needs to be signed by the payer and then submited via **/pay-submit** endpoint"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: paymentInformation
+          required: true
+          schema: 
+            $ref: "#/definitions/PaymentInformation"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/PayTransactionGenerateResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      security:
+        - api_key: []
+  /pay-submit:
+    post:
+      operationId: PayTransactionSubmit
+      tags:
+        - Pay
+      summary: Submit a signed royalties payment transaction on-chain
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: paymentTransaction
+          required: true
+          schema: 
+            $ref: "#/definitions/PayTransaction"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/PayTransactionSubmitResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      security:
+        - api_key: []
+
+definitions:
+  Empty:
+    type: "object"
+  MintCreator:
+    description: Creator object
+    type: object
+    required:
+      - address
+      - verified
+      - share
+    properties:
+      address:
+        description: Creator account address
+        type: string
+      verified:
+        description: If the creator signed the token metadata (1) or not (0)
+        type: integer
+      share:
+        description: Percentage of the royalties going to this creator
+        type: integer
+  MintMetadata:
+    description: Mint information
+    type: object
+    required:
+      - name
+      - image
+      - royalties
+      - rank
+      - isListed
+    properties:
+      name:
+        description: Token name
+        type: string
+      image:
+        description: Token image URL
+        type: string
+      thumbnail:
+        description: Token thumbnail URL
+        type: string
+      creators:
+        description: Token creators metadata field
+        type: array
+        items:
+          $ref: "#/definitions/MintCreator"
+      royalties:
+        description: Token royalties metadata field (divide by 100 to get percentage value)
+        type: integer
+      rank:
+        description: Scalp Empire calculated rank. Can be 0 in case rank is not calculated
+        type: integer
+      isListed:
+        description: If the token is listed on a known marketplace
+        type: boolean
+      lastActivity:
+        description: Timestamp of the last recorded activity
+        type: integer
+  MintSale:
+    description: Token sale information
+    type: object
+    required:
+      - transaction
+      - timestamp
+      - price
+    properties:
+      transaction:
+        description: Sale transaction signature
+        type: string
+      timestamp:
+        description: Unix timestamp of the block the sale was recorded in
+        type: integer
+      price:
+        description: Sale price in lamports
+        type: integer
+      royalties:
+        description: Sales royalties paid (divide by 100 to get percentage value)
+        type: integer
+  RoyaltyStatus:
+    description: "Status of the royalties payment:  
+
+
+    **Unknown** - No sale or no data  
+
+    **NotPaid** - No royalties were paid  
+
+    **PaidPartial** - Partial royalties paid  
+
+    **PaidFull** - Full royalties paid  
+
+    "
+    type: string
+    enum:
+      - Unknown
+      - NotPaid
+      - PaidPartial
+      - PaidFull
+  RoyaltySimple:
+    description: "Amount of royalties to be paid  
+
+
+    **Full** - Full royalties as specified in the token metadata  
+
+    **Half** - Half of the royalties specified in the token metadata  
+
+    "
+    type: string
+    enum:
+      - Full
+      - Half
+
+  PaymentInformation:
+    description: "Information about royalty payment  
+
+    Only use one of the **royalty, royaltyCustom, royaltyAmount** fields to specify the royalty amount that needs to be paid.  
+
+    "
+    type: object
+    required:
+      - mint
+      - saleTransaction
+      - payer
+    properties:
+      mint:
+        description: Token address to pay royalties for
+        type: string
+      saleTransaction:
+        description: Signature of the sale transaction we are referring to. Will be checked agains the last know sale transaction for the mint.
+        type: string
+      payer:
+        description: Wallet address of the royalties payer
+        type: string
+      royalty:
+        description: "Amount of royalties to be paid"
+        $ref: "#/definitions/RoyaltySimple"
+      royaltyCustom:
+        description: "Custom percentage of royalties to be paid in BP of the sale value.  
+        For example 330 means 3.3%  
+        "
+        type: integer
+      royaltyAmount:
+        description: "Custom amount of royalties to be paid in lamports"
+        type: integer
+  
+  PayTransactionGenerateStatus:
+    description: "Royalty payment transaction generation status:  
+
+
+    **Success** - Transaction was generated successfuly  
+
+    **ErrorInvalidParameters** - Only use one of the **royalty, royaltyCustom, royaltyAmount** fields  
+    
+    **ErrorSaleMismatch** - The sale transaction submited does not match the last recorded sale  
+
+    **ErrorTransaction** - Could not build the transaction
+
+    **ErrorRoyaltiesPaid** - Royalties are already paid
+
+    **ErrorCalculatingRoyalties** - Could not calculate royalties
+    
+    "
+    type: string
+    enum:
+      - Succes
+      - ErrorInvalidParameters
+      - ErrorSaleMismatch
+      - ErrorTransaction
+      - ErrorRoyaltiesPaid
+      - ErrorCalculatingRoyalties
+
+  PayTransactionSubmitStatus:
+    description: "Status of the royalty payment transaction submission:
+    
+    
+    **Confirmed** - Transaction was successfuly processed
+    
+    **Expired** - Transaction has expired, a new transaction needs to be generated
+    
+    **InsufficientFunds** - Payer does not have enough funds
+    
+    **InvalidSale** - The last sale of the token was not found
+    
+    **InvalidTransaction** - The transaction sent could not be parsed
+    
+    "
+    type: string
+    enum:
+      - Confirmed
+      - Expired
+      - InsufficientFunds
+      - InvalidSale
+      - InvalidTransaction
+
+  PayTransaction:
+    description: "User signed royalty payment transaction"
+    type: object
+    required:
+      - signedTransaction
+    properties:
+      signedTransaction:
+        description: "Hex encoded serialized signed royalty payment transaction from ** /pay-transaction** endpoint"
+        type: string
+
+      
+  CheckMintsRequest:
+    type: array
+    items:
+      description: Token addresses
+      type: string
+  
+  CheckMintResponse:
+    type: object
+    required:
+      - mint
+      - status
+    properties:
+      mint:
+        description: Token address
+        type: string
+      metadata:
+        description: Information about the mint. May be missing if token is not indexed.
+        $ref: "#/definitions/MintMetadata"
+      sale:
+        description: Last recorded sale. May be missing if there is no recorded sale.
+        $ref: "#/definitions/MintSale"
+      status:
+        description: Status of the royalties payment
+        $ref: "#/definitions/RoyaltyStatus"
+  CheckMintsResponse:
+    type: array
+    items:
+      $ref: "#/definitions/CheckMintResponse"
+  PayTransactionGenerateResponse:
+    description: "Contains the encoded royalty payment transaction and information about it"
+    type: object
+    required:
+      - status
+    properties:
+      status:
+        description: Status of the request
+        $ref: "#/definitions/PayTransactionGenerateStatus"
+      transaction:
+        description: Hex encoded serialized transaction for the user to sign
+        type: string
+      payer:
+        description: Wallet address of the royalties payer
+        type: string
+      amount:
+        description: Amount to be paid in lamports
+        type: number
+      fee:
+        description: Platform fee in lamports
+        type: number
+  PayTransactionSubmitResponse:
+    description: "Result of the royalty payment transaction submission"
+    type: object
+    required:
+      - status
+      - signature
+    properties:
+      status:
+        description: Status of the transaction
+        $ref: "#/definitions/PayTransactionSubmitStatus"
+      signature:
+        description: Transaction signature
+        type: string
+      
+
