@@ -8,12 +8,12 @@ The API also offers an easy way for developers to integrate royalty payments int
 If you are a creator or project owner and would like access to this API please contact us on our [Discord](https://www.discord.gg/scalpempire) in order to obtain your API KEY.
 
 
-## Work in progress
+## Resources
 
-TODO:  
-[ ] Expand documentation  
-[x] [JavaScript/TypeScript API SDK package](sdk/README.md)  
-[ ] React component  
+* [OpenApi specifications](docs/api.yaml)   
+* [JavaScript/TypeScript API SDK package](sdk/)  
+* [Sample Next.js React app](examples/simple-app-next/)  
+
 
 ## Sample workflow
 
