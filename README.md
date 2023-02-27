@@ -12,7 +12,7 @@ If you are a creator or project owner and would like access to this API please c
 
 TODO:  
 [ ] Expand documentation  
-[ ] TypeScript API SDK package  
+[x] [JavaScript/TypeScript API SDK package](sdk/README.md)  
 [ ] React component  
 
 ## Sample workflow
