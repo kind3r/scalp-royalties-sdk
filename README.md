@@ -17,7 +17,7 @@ If you are a creator or project owner and would like access to this API please c
 
 ## Sample workflow
 
-Please see [docs/api.yaml](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/kind3r/scalp-royalties-sdk/main/docs/api.yaml#/Check/CheckMultipleMints) for the OpenApi specifications.  
+Please see [docs/api.yaml](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/kind3r/scalp-royalties-sdk/main/docs/api.yaml) for the OpenApi specifications.  
 
 1. Fetch information about what NFTs part of your collection the user holds
 2. Use the `GET /check/{mint}` or `POST /check` endpoints to retrive NFT and royalty status
