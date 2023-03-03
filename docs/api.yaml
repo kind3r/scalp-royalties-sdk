@@ -11,7 +11,7 @@ info:
 
   If you are a creator or project owner and would like access to this API please contact us on our [Discord](https://www.discord.gg/scalpgang) in order to obtain your API KEY.
   "
-  version: 1.1.0
+  version: 1.1.1
 host: royalties.scalp-empire.com
 basePath: /v1
 schemes:
@@ -155,6 +155,83 @@ paths:
             statusCode: 200
             responseParameters:
               method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        type: mock
+  /pay-proofs:
+    get:
+      operationId: GetPayProofs
+      tags:
+        - Pay
+      summary: Get a list of the latest royalty payment transactions ordered by newest first
+      produces:
+        - "application/json"
+      parameters:
+        - name: since
+          in: query
+          required: false
+          description: Unix timestamp of the oldest transaction
+          type: integer
+        - name: limit
+          in: query
+          required: false
+          description: Number of payment transactions to return. Max 1000. Default 100.
+          type: integer
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetPayProofsResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ScalpRoyaltiesFunction.Arn}/invocations
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+        type: aws_proxy
+      security:
+        - api_key: []
+    options:
+      tags:
+        - CORS
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: since
+          in: query
+          required: false
+          description: Unix timestamp of the oldest transaction
+          type: integer
+        - name: limit
+          in: query
+          required: false
+          description: Number of payment transactions to fetch. Max 1000. Default 100.
+          type: integer
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         passthroughBehavior: when_no_match
@@ -486,6 +563,12 @@ definitions:
       royalties:
         description: Sales royalties paid (divide by 100 to get percentage value)
         type: integer
+      proof:
+        description: Royalty payment transaction signature
+        type: string
+      proofTime:
+        description: Unix timestamp of the royalty payment transaction
+        type: number
   RoyaltyStatus:
     description: "Status of the royalties payment:  
 
@@ -614,6 +697,31 @@ definitions:
         description: "Hex encoded serialized signed royalty payment transaction from ** /pay-transaction** endpoint"
         type: string
 
+  PayProof:
+    description: "Proof of royalty payment"
+    type: object
+    required:
+      - transaction
+    properties:
+      transaction:
+        description: "Royalty payment transaction signature"
+        type: string
+      transactionTime: 
+        description: "Unix timestamp of the royalty payment transaction time"
+        type: integer
+      mint:
+        description: "Token address for which royalties were paid"
+        type: string
+      saleTransaction:
+        description: "Sale transaction signature for which royalties were paid"
+        type: string
+      payer:
+        description: "Wallet address of the payer"
+        type: string
+      paid:
+        description: "Paid amount in lamports"
+        type: number
+
   Collection:
     description: "Collection information"
     type: object
@@ -703,6 +811,10 @@ definitions:
     type: array
     items:
       $ref: "#/definitions/CheckMintResponse"
+  GetPayProofsResponse:
+    type: array
+    items:
+      $ref: "#/definitions/PayProof"
   PayTransactionGenerateResponse:
     description: "Contains the encoded royalty payment transaction and information about it"
     type: object

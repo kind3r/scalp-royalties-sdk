@@ -100,6 +100,14 @@ export type MintSale = {
    * Sales royalties paid in BP (divide by 100 to get percentage value)
    */
   royalties: number;
+  /**
+   * Royalty payment transaction signature if the payment was done via the API
+   */
+  proof?: string;
+  /**
+   * Unix timestamp of the royalty payment transaction
+   */
+  proofTime?: number;
 }
 
 export enum RoyaltyStatus {
@@ -152,6 +160,33 @@ export enum RoyaltySimple {
 
 export type PayTransaction = {
   signedTransaction: string;
+}
+
+export type PayProof = {
+  /**
+   * Royalty payment transaction signature
+   */
+  transaction: string;
+  /**
+   * Unix timestamp of the royalty payment transaction time
+   */
+  transactionTime: number;
+  /**
+   * Token address for which royalties were paid
+   */
+  mint: string;
+  /**
+   * for which royalties were paid
+   */
+  saleTransaction: string;
+  /**
+   * Wallet address of the payer
+   */
+  payer: string;
+  /**
+   * Paid amount in lamports
+   */
+  paid: number;
 }
 
 export type CheckMintResponse = {
@@ -209,3 +244,5 @@ export enum PayTransactionSubmitStatus {
 export type GetCollectionsResponse = Collection[];
 
 export type GetMintsResponse = string[];
+
+export type GetPayProofsResponse = PayProof[];

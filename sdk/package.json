@@ -1,6 +1,6 @@
 {
   "name": "@scalp/royalties",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Scalp Empire royalties SDK",
   "main": "dist/scalp-royalties.cjs",
   "module": "dist/scalp-royalties.mjs",

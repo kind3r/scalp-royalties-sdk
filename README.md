@@ -28,6 +28,9 @@ Please see [docs/api.yaml](https://petstore.swagger.io/?url=https://raw.githubus
 
 ## Changelog
 
+### `1.1.1` 2023-03-03
+ - Add sale proof of royalty payment (transaction) if it was done via this API
+ - Endpoint to get last royalty payments
 ### `1.1.0` 2023-03-03
  - Add collection and mint information
 ### `1.0.0` - 2023-02-27

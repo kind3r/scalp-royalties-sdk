@@ -2,6 +2,7 @@ import {
   CheckMintsResponse,
   GetCollectionsResponse,
   GetMintsResponse,
+  GetPayProofsResponse,
   PaymentInformation,
   PayTransaction,
   PayTransactionGenerateResponse,
@@ -92,6 +93,34 @@ class ScalpRoyaltiesSDKClass {
       });
       if (res.ok) {
         const body: CheckMintsResponse = await res.json();
+        return body;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Get a list of the latest royalty payment transactions ordered by newest first
+   * @param since Unix timestamp of the oldest transaction
+   * @param limit Number of payment transactions to return. Max 1000. Default 100.
+   * @returns 
+   */
+  async getPayProofs(since: number | undefined, limit: number = 100): Promise<GetPayProofsResponse | void> {
+    try {
+      const params: string[] = [];
+      if (typeof since !== "undefined") {
+        params.push(`since=${encodeURIComponent(since)}`);
+      }
+      params.push(`limit=${encodeURIComponent(limit)}`);
+      const res = await fetch(this.endpoint + "/pay-proofs?" + params.join("&"), {
+        method: "GET",
+        headers: {
+          "x-api-key": this.apiKey
+        },
+      });
+      if (res.ok) {
+        const body: GetPayProofsResponse = await res.json();
         return body;
       }
     } catch (error) {
