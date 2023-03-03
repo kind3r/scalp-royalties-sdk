@@ -1,5 +1,7 @@
 import {
   CheckMintsResponse,
+  GetCollectionsResponse,
+  GetMintsResponse,
   PaymentInformation,
   PayTransaction,
   PayTransactionGenerateResponse,
@@ -29,6 +31,49 @@ class ScalpRoyaltiesSDKClass {
    */
   setApiKey(newApiKey: string) {
     this.apiKey = newApiKey;
+  }
+
+  /**
+   * Get the list of collections the API key has access to
+   * @returns 
+   */
+  async getCollections(): Promise<GetCollectionsResponse | void> {
+    try {
+      const res = await fetch(this.endpoint + "/collections", {
+        method: "GET",
+        headers: {
+          "x-api-key": this.apiKey
+        },
+      });
+      if (res.ok) {
+        const body: GetCollectionsResponse = await res.json();
+        return body;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Get the list of mints (NFT token addresses) of a collection
+   * @param collectionId Id of the collection (@see getCollections)
+   * @returns 
+   */
+  async getCollectionMints(collectionId: number): Promise<GetMintsResponse | void> {
+    try {
+      const res = await fetch(this.endpoint + "/mints/" + encodeURIComponent(collectionId), {
+        method: "GET",
+        headers: {
+          "x-api-key": this.apiKey
+        },
+      });
+      if (res.ok) {
+        const body: GetMintsResponse = await res.json();
+        return body;
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   /**

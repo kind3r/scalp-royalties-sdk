@@ -1,3 +1,70 @@
+export type Collection = {
+  /**
+   * Collection ID
+   */
+  id: number;
+  /**
+   * Unix timestamp when the collection was first detected
+   */
+  createdAt: number;
+  /**
+   * Collection name
+   */
+  name: string;
+  /**
+   * Collection description
+   */
+  description: string;
+  /**
+   * Collection thumbnail
+   */
+  logoUrl?: string;
+  /**
+   * Number of items in the collection
+   */
+  items: number;
+  /**
+   * Mint date (Unix timestamp)
+   */
+  mintDate: number;
+  /**
+   * Mint price in lamports
+   */
+  mintPrice: number;
+  /**
+   * Website URL
+   */
+  website?: string;
+  /**
+   * Twitter URL
+   */
+  twitter?: string;
+  /**
+   * Discord invite URL
+   */
+  discord?: string;
+  /**
+   * MagicEden symbol. Use https://magiceden.io/marketplace/SYMBOL to access the collection on MagicEden
+   */
+  symbolME?: string;
+  /**
+   * Floor price in lamports
+   */
+  floorPrice?: number;
+  /**
+   * Number of listed items
+   */
+  listedItems?: number;
+  /**
+   * Number of distinct wallets holding at least 1 NFT from the collection
+   */
+  owners?: number;
+  /**
+   * Unix timestamp of the last date of the full owners update
+   */
+  lastOwnersUpdate?: number;
+}
+
 export type MintCreator = {
   address: string;
   verified: number;
@@ -138,3 +205,7 @@ export enum PayTransactionSubmitStatus {
   InvalidSale = "InvalidSale",
   InvalidTransaction = "InvalidTransaction"
 }
+
+export type GetCollectionsResponse = Collection[];
+
+export type GetMintsResponse = string[];

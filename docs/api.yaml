@@ -3,15 +3,15 @@ info:
   title: "Scalp Empire Creator Royalties API"
   description: "
   [Scalp Empire](https://www.scalp-empire.com) offers an easy way for creators and project owners to check the status of royalty payments for the NFTs part of their collection.
-  Access is provided **free of charge** within certain usage limits.
+  Access is provided **free of charge** within certain usage limits. Small fees apply to users paying royalties.
 
 
   The API also offers an easy way for developers to integrate royalty payments into their dAPP by generating and submiting the royalty payment transaction.
 
 
-  If you are a creator or project owner and would like access to this API please contact us on our [Discord](https://www.discord.gg/scalpempire) in order to obtain your API KEY.
+  If you are a creator or project owner and would like access to this API please contact us on our [Discord](https://www.discord.gg/scalpgang) in order to obtain your API KEY.
   "
-  version: 1.0.0
+  version: 1.1.0
 host: royalties.scalp-empire.com
 basePath: /v1
 schemes:
@@ -26,6 +26,8 @@ tags:
     description: Check status of royalties
   - name: Pay
     description: Generate and submit royalty payment transactions
+  - name: Info
+    description: General information about collection and mints
   - name: CORS
     description: CORS related operations
 paths:
@@ -51,8 +53,51 @@ paths:
           headers:
             Access-Control-Allow-Origin:
               type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ScalpRoyaltiesFunction.Arn}/invocations
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+        type: aws_proxy
       security:
         - api_key: []
+    options:
+      tags:
+        - CORS
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: mint
+          in: path
+          required: true
+          description: Token address
+          type: string
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        type: mock
   /check:
     post:
       operationId: CheckMultipleMints
@@ -77,8 +122,45 @@ paths:
           headers:
             Access-Control-Allow-Origin:
               type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ScalpRoyaltiesFunction.Arn}/invocations
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+        type: aws_proxy
       security:
         - api_key: []
+    options:
+      tags:
+        - CORS
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        type: mock
   /pay-transaction:
     post:
       operationId: PayTransactionGenerate
@@ -104,8 +186,45 @@ paths:
           headers:
             Access-Control-Allow-Origin:
               type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ScalpRoyaltiesFunction.Arn}/invocations
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+        type: aws_proxy
       security:
         - api_key: []
+    options:
+      tags:
+        - CORS
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        type: mock
   /pay-submit:
     post:
       operationId: PayTransactionSubmit
@@ -130,9 +249,167 @@ paths:
           headers:
             Access-Control-Allow-Origin:
               type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ScalpRoyaltiesFunction.Arn}/invocations
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+        type: aws_proxy
       security:
         - api_key: []
-
+    options:
+      tags:
+        - CORS
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        type: mock
+  /collections:
+    get:
+      operationId: GetCollections
+      tags:
+        - Info
+      summary: Get information about the collections you have access to
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetCollectionsResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ScalpRoyaltiesFunction.Arn}/invocations
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+        type: aws_proxy
+      security:
+        - api_key: []
+    options:
+      tags:
+        - CORS
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        type: mock
+  /mints/{collectionId}:
+    get:
+      operationId: GetMints
+      tags:
+        - Info
+      summary: Get the list of mints (token addresses) of a collection
+      produces:
+        - "application/json"
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          description: Id of the collection
+          type: number
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetMintsResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ScalpRoyaltiesFunction.Arn}/invocations
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+        type: aws_proxy
+      security:
+        - api_key: []
+    options:
+      tags:
+        - CORS
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          description: Id of the collection
+          type: number
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        type: mock
 definitions:
   Empty:
     type: "object"
@@ -221,6 +498,8 @@ definitions:
 
     **PaidFull** - Full royalties paid  
 
+    **Exempted** - Exempted from royalty payments  
+
     "
     type: string
     enum:
@@ -228,6 +507,7 @@ definitions:
       - NotPaid
       - PaidPartial
       - PaidFull
+      - Exempted
   RoyaltySimple:
     description: "Amount of royalties to be paid  
 
@@ -334,6 +614,66 @@ definitions:
         description: "Hex encoded serialized signed royalty payment transaction from ** /pay-transaction** endpoint"
         type: string
 
+  Collection:
+    description: "Collection information"
+    type: object
+    required:
+      - id
+      - createdAt
+      - name
+      - description
+      - items
+      - mintDate
+      - mintPrice
+    properties:
+      id:
+        description: "Collection ID"
+        type: integer
+      createdAt:
+        description: "When the collection was first detected. Unix timestamp."
+        type: integer
+      name:
+        description: "Collection name"
+        type: string
+      description:
+        description: "Collection description"
+        type: string
+      logoUrl:
+        description: "Logo image, a thumbnail of a random NFT from the collection"
+        type: string
+      items:
+        description: "Number of items in the collection"
+        type: integer
+      mintDate:
+        description: "Unix timestamp mint date"
+        type: integer
+      mintPrice:
+        description: "Mint price in lamports"
+        type: integer
+      website:
+        description: "Website URL"
+        type: string
+      twitter:
+        description: "Twitter URL"
+        type: string
+      discord:
+        description: "Discord invite link"
+        type: string
+      symbolME:
+        description: "MagicEden symbol"
+        type: string
+      floorPrice:
+        description: "Current floor price in lamports"
+        type: integer
+      listedItems:
+        description: "Number of listed items"
+        type: integer
+      owners:
+        description: "Number of distinct owner wallets"
+        type: integer
+      lastOwnersUpdate:
+        description: "Unix timestamp when the full owner list was last updated"
+        type: integer
       
   CheckMintsRequest:
     type: array
@@ -398,4 +738,13 @@ definitions:
         description: Transaction signature
         type: string
       
+  GetCollectionsResponse:
+    type: array
+    items:
+      $ref: "#/definitions/Collection"
+
+  GetMintsResponse:
+    type: array
+    items:
+      type: string
 
