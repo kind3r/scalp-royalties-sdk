@@ -5,7 +5,7 @@ Access is provided **free of charge** within certain usage limits.
 
 The API also offers an easy way for developers to integrate royalty payments into their dAPP by generating and submiting the royalty payment transaction.
 
-If you are a creator or project owner and would like access to this API please contact us on our [Discord](https://www.discord.gg/scalpempire) in order to obtain your API KEY.
+If you are a creator or project owner and would like access to this API please contact us on our [Discord](https://www.discord.gg/uBVgnSWydc) in order to obtain your API KEY.
 
 
 ## Resources
