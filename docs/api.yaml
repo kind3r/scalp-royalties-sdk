@@ -370,8 +370,8 @@ paths:
       operationId: PayTransactionOverride
       tags:
         - Pay
-      summary: Override royalties on a sale transaction. Note this method should only be used from a backend.
-      description: "The `payer` needs to be set to the secret key"
+      summary: Override royalties on a sale transaction. **Note this method should only be used from a backend**.
+      description: "**Note this method should only be used from a backend as it uses a secret key**"
       consumes:
         - "application/json"
       produces:
