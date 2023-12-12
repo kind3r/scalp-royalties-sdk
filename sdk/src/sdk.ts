@@ -4,6 +4,7 @@ import {
   GetMintsResponse,
   GetPayProofsResponse,
   PaymentInformation,
+  PaymentOverrideInformation,
   PayTransaction,
   PayTransactionGenerateResponse,
   PayTransactionSubmitResponse
@@ -168,6 +169,29 @@ class ScalpRoyaltiesSDKClass {
           "x-api-key": this.apiKey
         },
         body: JSON.stringify(payTransaction)
+      });
+      if (res.ok) {
+        const body: PayTransactionSubmitResponse = await res.json();
+        return body;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Override last sale royalties
+   * @param paymentInfo 
+   * @returns 
+   */
+  async overrideRoyalties(paymentInfo: PaymentOverrideInformation): Promise<PayTransactionSubmitResponse | void> {
+    try {
+      const res = await fetch(this.endpoint + "/pay-override", {
+        method: "POST",
+        headers: {
+          "x-api-key": this.apiKey
+        },
+        body: JSON.stringify(paymentInfo)
       });
       if (res.ok) {
         const body: PayTransactionSubmitResponse = await res.json();

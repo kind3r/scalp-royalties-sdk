@@ -11,7 +11,7 @@ info:
 
   If you are a creator or project owner and would like access to this API please contact us on our [Discord](https://www.discord.gg/scalpgang) in order to obtain your API KEY.
   "
-  version: 1.1.1
+  version: 1.1.2
 host: royalties.scalp-empire.com
 basePath: /v1
 schemes:
@@ -365,6 +365,70 @@ paths:
         requestTemplates:
           application/json: "{\"statusCode\": 200}"
         type: mock
+  /pay-override:
+    post:
+      operationId: PayTransactionOverride
+      tags:
+        - Pay
+      summary: Override royalties on a sale transaction. Note this method should only be used from a backend.
+      description: "The `payer` needs to be set to the secret key"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: paymentInformation
+          required: true
+          schema: 
+            $ref: "#/definitions/PaymentOverrideInformation"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/PayTransactionSubmitResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ScalpRoyaltiesFunction.Arn}/invocations
+        httpMethod: POST
+        passthroughBehavior: when_no_match
+        type: aws_proxy
+      security:
+        - api_key: []
+    options:
+      tags:
+        - CORS
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: when_no_match
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        type: mock
   /collections:
     get:
       operationId: GetCollections
@@ -638,6 +702,38 @@ definitions:
         description: "Custom amount of royalties to be paid in lamports"
         type: integer
   
+  PaymentOverrideInformation:
+    description: "Override information about a royalty transaction  
+
+    Only use one of the **royalty, royaltyCustom, royaltyAmount** fields to specify the royalty amount that needs to be paid.  
+
+    "
+    type: object
+    required:
+      - mint
+      - saleTransaction
+      - payer
+    properties:
+      mint:
+        description: Token address to pay royalties for
+        type: string
+      saleTransaction:
+        description: Signature of the sale transaction we are referring to. Will be checked agains the last know sale transaction for the mint.
+        type: string
+      secretKey:
+        description: Secret API key
+        type: string
+      royalty:
+        description: "Amount of royalties to be paid"
+        $ref: "#/definitions/RoyaltySimple"
+      royaltyCustom:
+        description: "Custom percentage of royalties to be paid in BP of the sale value.  
+        For example 330 means 3.3%  
+        "
+        type: integer
+      royaltyAmount:
+        description: "Custom amount of royalties to be paid in lamports"
+        type: integer
   PayTransactionGenerateStatus:
     description: "Royalty payment transaction generation status:  
 

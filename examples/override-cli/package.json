@@ -1,0 +1,23 @@
+{
+  "name": "override-cli",
+  "version": "1.0.0",
+  "description": "Sample override transaction royalty payment",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node-dev --transpile-only ./src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kind3r.sol",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "@types/node-fetch": "^2.6.9",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "node-fetch": "^2.0.0",
+    "@scalp/royalties": "file:../../sdk"
+  }
+}

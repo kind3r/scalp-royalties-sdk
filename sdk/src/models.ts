@@ -146,6 +146,34 @@ export type PaymentInformation = {
   royaltyAmount?: number;
 }
 
+export type PaymentOverrideInformation = {
+  /**
+   * Token address to pay royalties for
+   */
+  mint: string;
+  /**
+   * Signature of the sale transaction we are referring to. Will be checked agains the last know sale transaction for the mint.
+   */
+  saleTransaction: string;
+  /**
+   * Secret API key
+   */
+  secretKey: string;
+  /**
+   * Amount of royalties to be paid
+   */
+  royalty?: RoyaltySimple;
+  /**
+   * Custom percentage of royalties to be paid in BP of the sale value.
+   * For example 330 means 3.3%  
+   */
+  royaltyCustom?: number;
+  /**
+   * Custom amount of royalties to be paid in lamports
+   */
+  royaltyAmount?: number;
+}
+
 export enum RoyaltyMode {
   SimpleFull,
   SimpleHalf,

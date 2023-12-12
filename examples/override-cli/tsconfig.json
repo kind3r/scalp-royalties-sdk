@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+      "skipLibCheck": true,
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "allowJs": true,
+      "noImplicitAny": false,
+      "downlevelIteration": true,
+      "resolveJsonModule": true,
+      "moduleResolution": "node",
+      "lib": ["es2021"],
+      "module": "commonjs",
+      "target": "es5",
+      "baseUrl": ".",
+      "paths": {
+        "*": ["node_modules/*", "src/types/*"]
+      },
+      "typeRoots": ["node_modules/@types", "src/types"],
+      "outDir": "./dist"
+    },
+    "include": ["./src/**/*"]
+  }
